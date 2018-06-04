@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/style.css" />
+</head>
+<body>
+    <h1>Survey Form</h1>
+    <div id="container">
+        <div id="message"></div>
+        <div id="random"></div>
+    </div>
+    <form action="/result" method="post">
+        <label for="name">Your Name:</label>
+        <input type="text" name="name">
+        <label for="location">Dojo Location:</label>
+        <select name="location">
+            <option value="Mountain View">Mountain View</option>
+            <option value="Seattle">Seattle</option>
+            <option value="Los Angeles">Los Angeles</option>
+            <option value="Dallas">Dallas</option>
+        </select>
+        <label for="language">Favorite Language:</label>
+        <select name="language">
+            <option value="JavaScript">JavaScript</option>
+            <option value="Python">Python</option>
+            <option value="PHP">PHP</option>
+            <option value="Ruby">Ruby</option>
+        </select>
+        <label for="comment">Comment:</label>
+        <textarea name="comment" cols="30" rows="10" style="resize: none;"></textarea>
+        <input type="submit" value="Submit">
+    </form>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
+    <script>
+        $(document).ready(function () {
+            var socket = io();
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                socket.emit('posting_form', {
+                    name: $('input[name="name"]').val(),
+                    location: $('select[name="location"]').val(),
+                    language: $('select[name="language"]').val(),
+                    comment: $('textarea[name="comment"]').val(),
+                });
+            });
+
+            socket.on('updated_message', function(message) {
+                $("#message").html(message);
+            });
+
+            socket.on('random_number', function(number) {
+                $("#random").html(number);
+            });
+        });
+    </script>
+</body>
+</html>
